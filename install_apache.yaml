@@ -1,0 +1,19 @@
+---
+- name: Install apache
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+
+    - name: Install apache
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+        update_cache: true
+
+    - name: Ensure apache is enabled and running
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+        enabled: true

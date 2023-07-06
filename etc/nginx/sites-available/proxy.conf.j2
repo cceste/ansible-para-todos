@@ -1,0 +1,9 @@
+
+server {
+  root /var/www/html;
+  index index.html;
+  server_name {{nginx.server_name}};
+  location / {
+    proxy_pass http://{{apache.listen}};
+  }
+}

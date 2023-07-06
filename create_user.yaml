@@ -1,0 +1,31 @@
+---
+- name: Create ansible user
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+
+    - name: Create 'ansible' user
+      user:
+        name: ansible
+        comment: Ansible Automation User
+
+    - name: Create /etc/sudoers.d/ansible
+      file:
+        path: /etc/sudoers.d/ansible
+        mode: 0640
+        state: touch
+
+    - name: Allow 'ansible' user to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers.d/ansible
+        state: present
+        line: "ansible ALL=(ALL) NOPASSWD: ALL"
+        validate: "visudo -cf %s"
+
+    - name: Add ssh key
+      authorized_key:
+        user: ansible
+        state: present
+        key: "{{ lookup('file', './ansible.key.pub') }}"

@@ -1,0 +1,9 @@
+all:
+  hosts:
+    lpt.cceste.net:
+      ansible_ssh_private_key_file: ansible.key
+      ansible_user: ansible
+      nginx:
+        server_name: lpt.cceste.net
+      apache:
+        listen: 127.0.0.1:8080

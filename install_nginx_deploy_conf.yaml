@@ -1,0 +1,50 @@
+---
+- name: Install nginx
+  hosts: all
+  gather_facts: false
+  become: true
+
+  tasks:
+
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+
+    - name: Clear sites-available
+      ansible.builtin.file:
+        path: /etc/nginx/sites-available
+        state: absent
+
+    - name: Clear sites-enabled
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled
+        state: absent
+
+    - name: Create sites-available and sites-enabled
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0755
+      with_items:
+        - /etc/nginx/sites-available
+        - /etc/nginx/sites-enabled
+
+    - name: Deploy nginx conf
+      ansible.builtin.copy:
+        src: etc/nginx/sites-available/
+        dest: /etc/nginx/sites-available
+        mode: 0644
+
+    - name: Enable sites
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/lpt.cceste.net.conf
+        dest: /etc/nginx/sites-enabled/lpt.cceste.net.conf
+        state: link
+
+    - name: Ensure nginx is enabled and running
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+        enabled: true

@@ -1,0 +1,25 @@
+---
+- name: Install apache
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+
+    - name: Install apache
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+        update_cache: true
+
+    - name: Change apache2 port to 8080
+      lineinfile:
+        path: /etc/apache2/ports.conf
+        regexp: ^Listen
+        line: Listen 127.0.0.1:8080
+
+    - name: Ensure apache is enabled and running
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+        enabled: true

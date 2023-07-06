@@ -1,0 +1,25 @@
+---
+- name: Install apache
+  hosts: all
+  gather_facts: true
+  become: true
+
+  tasks:
+
+    - name: Install apache
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+        update_cache: true
+
+    - name: Deploy apache2 conf
+      ansible.builtin.copy:
+        src: etc/apache2/ports.conf
+        dest: /etc/apache2/ports.conf
+        mode: 0644
+
+    - name: Ensure apache is enabled and running
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+        enabled: true
